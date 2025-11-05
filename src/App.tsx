@@ -1,26 +1,34 @@
-import CountBtn from "@/components/count-btn";
-import ReactSVG from "@/assets/react.svg";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { DualViewport, DeviceContent } from "@/components/devices";
+import { OrganizationOnboarding } from "@/components/onboarding/organization-onboarding";
+import { AppRouter } from "@/routes";
+import { ThemeProvider } from "@/contexts/theme-context";
+import { SkeletonSettingsProvider } from "@/contexts/skeleton-settings-context";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState(false);
+
+  const handleOnboardingComplete = (data: Record<string, any>) => {
+    console.log('Onboarding completed!', data);
+    setIsOnboardingComplete(true);
+  };
+
   return (
-    <main className="flex flex-col items-center justify-center h-screen">
-      <div className="flex flex-col items-center gap-y-4">
-        <div className="inline-flex items-center gap-x-4">
-          <img src={ReactSVG} alt="React Logo" className="w-32" />
-          <span className="text-6xl">+</span>
-          <img src={"/vite.svg"} alt="Vite Logo" className="w-32" />
-        </div>
-        <a
-          href="https://ui.shadcn.com"
-          rel="noopener noreferrer nofollow"
-          target="_blank"
-        >
-          <Badge variant="outline">shadcn/ui</Badge>
-        </a>
-        <CountBtn />
-      </div>
-    </main>
+    <ThemeProvider>
+      <SkeletonSettingsProvider>
+        <DualViewport>
+          <DeviceContent>
+            {!isOnboardingComplete ? (
+              <OrganizationOnboarding onComplete={handleOnboardingComplete} />
+            ) : (
+              <AppRouter />
+            )}
+            <Toaster position="bottom-center" richColors closeButton />
+          </DeviceContent>
+        </DualViewport>
+      </SkeletonSettingsProvider>
+    </ThemeProvider>
   );
 }
 
